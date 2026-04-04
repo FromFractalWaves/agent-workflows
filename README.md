@@ -31,8 +31,8 @@ skills/                          # Versioned skill snapshots
   spec-docs/                     # spec-docs skill versions
   skill-manager/                 # skill-manager-v1.md, ...
 
-changelog/                       # Skill evolution — case studies with reasoning
-  spec-to-build/                 # Per-update entries: stb-update-reasoning.md, ...
+changelog/                       # Skill evolution — per-version case studies
+  spec-to-build/                 # v1/, v2/, ... each with diff.md, reasoning.md
   docs/
   spec-docs/
   skill-manager/
@@ -47,6 +47,7 @@ origin/                          # Skill ideation — outlines and reasoning bef
   spec-docs/
 
 doc.md                           # How I Build Software with AI Agents — full workflow write-up
+vision.md                        # Where this project is headed — ideas, not commitments
 README.md                        # This file
 ```
 
@@ -150,12 +151,11 @@ The spec-to-build skill bridges them. It translates planning language into execu
 
 ## Changelog
 
-The changelog is the most unique part of this repo. Each skill update is documented with:
+The changelog is the most unique part of this repo. Each skill update lives in its own versioned directory (`changelog/[skill]/v[N]/`) with separate files:
 
-- **What happened** — the specific agent behavior that prompted the change
-- **The diff** — what changed in the skill file
-- **What resulted** — did it fix the behavior? Partially? Did it need another iteration?
-- **Reasoning** — why this change and not a different one
+- **`diff.md`** — what changed in the skill file
+- **`reasoning.md`** — the specific agent behavior that prompted the change, why this fix and not another, and whether it worked
+- **`outline.md` / `idea.md`** (optional) — planning notes or initial thinking before the update
 
 This is empirical documentation of how to manage AI agent behavior. Not theory about what should work — actual interventions with actual outcomes.
 
