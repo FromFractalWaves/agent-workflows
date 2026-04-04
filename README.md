@@ -38,7 +38,8 @@ changelog/                       # Skill evolution — per-version case studies
   skill-manager/
 
 workflows/                       # Process documentation
-  rebuild_workflow.md             # Clean rebuild workflow for broken UI pages
+  rebuild/                       # Rebuild from clean specs instead of debugging
+  repo-transplant/               # Extract specs from source repos for native rebuilds
 
 origin/                          # Skill ideation — outlines and reasoning before a skill exists
   skill-manager/                 # idea.md, outline.md
@@ -118,7 +119,7 @@ The full planning-to-execution process:
 5. **Update docs** — run spec-docs to update affected documentation
 6. **Clean up** — delete spec files when done
 
-### UI Rebuild Workflow
+### Rebuild Workflow
 
 When debugging leads to regression loops:
 
@@ -128,7 +129,19 @@ When debugging leads to regression loops:
 4. **Build from clean** — no patching, no regression risk
 5. **Capture change notes** — small issues noticed during testing go into a running list for future specs
 
-See `workflows/rebuild_workflow.md` for the full process with prompt templates and file conventions.
+See `workflows/rebuild/` for the full process with prompt templates and file conventions.
+
+### Repo Transplant
+
+When you need to integrate functionality from one repo into another without merging code:
+
+1. **Read the source repo end-to-end** — understand what it does as a system
+2. **Distill a spec** — describe the functionality in plain language, capturing the *what* not the *how*
+3. **Drop the spec in the target repo** — run spec-to-build to rebuild it natively
+
+The source repo's code stays untouched. The spec carries the knowledge forward; spec-to-build rebuilds it using the target repo's patterns.
+
+See `workflows/repo-transplant/` for the extraction workflow and the full rationale.
 
 ### Three Documentation Layers
 

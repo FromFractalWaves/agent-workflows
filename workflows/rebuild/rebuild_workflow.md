@@ -1,14 +1,15 @@
-# UI Rebuild Workflow
+# Rebuild Workflow
 
-A repeatable process for cleanly rebuilding broken or drifted UI pages using Claude Code.
+A repeatable process for cleanly rebuilding broken or drifted components using Claude Code — instead of debugging, rebuild from a clean spec.
 
 ---
 
 ## When to use this
 
-- A page is broken after a restructure
-- A page has drifted from intended design
-- You want to rebuild a page in the context of the current UI rather than debug the old one
+- A component is broken after a restructure
+- Something has drifted from intended design
+- Debugging is leading to regression loops — fixing one thing breaks another
+- You'd rather rebuild against the current codebase than patch the old implementation
 
 ---
 
@@ -19,13 +20,13 @@ Use `/plan` in Claude Code to explore the system end-to-end before touching anyt
 **Prompt template:**
 ```
 ok here is the /plan i want you to look at the docs and code base and closely examine 
-how [FEATURE] works, from [DATA/ENTRY POINT] through the API endpoints to the [PAGE] 
-in the webui. then explain how it should all work end-to-end in a doc you will write 
+how [FEATURE] works, from [ENTRY POINT] through [INTERMEDIATE LAYERS] to [OUTPUT/ENDPOINT]. 
+then explain how it should all work end-to-end in a doc you will write 
 as specs/[feature]_fix_info.md
 ```
 
 **What it does:**
-- Spins up parallel explore agents (data/API side + web UI side)
+- Spins up parallel explore agents to trace the full flow
 - Writes a comprehensive reference doc to `specs/[feature]_fix_info.md`
 - No code changes — pure exploration and documentation
 
@@ -39,10 +40,9 @@ Write a clean rebuild spec in Claude chat (not Claude Code). Reference the fix_i
 
 **Key things the spec must include:**
 - Current state (what exists, what's broken, what's working)
-- Route(s) being rebuilt
-- Data shapes (point to fix_info doc, don't duplicate)
-- Layout and behavior per route
-- Error/loading/empty states — all three
+- What's being rebuilt (routes, modules, functions — whatever the scope is)
+- Data shapes and interfaces (point to fix_info doc, don't duplicate)
+- Expected behavior — inputs, outputs, edge cases, error states
 - What the spec does NOT include (scope boundary)
 
 **Prompt to Claude chat:**
@@ -80,7 +80,7 @@ It will flag edge cases, scope the steps, and suggest whether a full rewrite or 
 
 ## Step 5: Build
 
-Let Claude Code execute the build plan. Run the dev server and verify manually.
+Let Claude Code execute the build plan. Verify the result.
 
 **If it fails:** `git checkout .` then `git clean -fd` to revert. Review what went wrong, update the spec or build plan, try again on a branch.
 
@@ -88,7 +88,7 @@ Let Claude Code execute the build plan. Run the dev server and verify manually.
 
 ## Change Notes
 
-Keep a running `specs/change_notes.md` for small UI issues you notice during testing (e.g. "Albatross logo in top left should link to `/`"). These feed into future specs or can be batched into a corrections pass.
+Keep a running `specs/change_notes.md` for small issues you notice during testing. These feed into future specs or can be batched into a corrections pass.
 
 ---
 
@@ -100,4 +100,4 @@ Keep a running `specs/change_notes.md` for small UI issues you notice during tes
 | `specs/[feature]_rebuild.md` | Spec — intent and design |
 | `specs/[feature]_rebuild_misalignments.md` | Auto-generated — review before building |
 | `specs/[feature]_rebuild_buildplan.md` | Auto-generated — Claude Code executes this |
-| `specs/change_notes.md` | Running list of small UI issues to fix |
+| `specs/change_notes.md` | Running list of small issues to fix |
