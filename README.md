@@ -25,26 +25,29 @@ Everything here was developed through real use on a production-scale project (a 
 ## Repo Structure
 
 ```
-skills/              # Portable Claude Code skills — drop into .claude/skills/
-  spec-to-build/     # Turn rough specs into repo-aligned build plans
-  docs/              # Full documentation audit against codebase
-  spec-docs/         # Targeted post-build doc updates using spec outputs
+skills/                          # Versioned skill snapshots
+  spec-to-build/                 # spec-to-build-v1.md, spec-to-build-v2.md, ...
+  docs/                          # docs skill versions
+  spec-docs/                     # spec-docs skill versions
+  skill-manager/                 # skill-manager-v1.md, ...
 
-workflows/           # Process documentation
-  spec-to-build.md   # The planning-to-execution pipeline
-  ui-rebuild.md       # Clean rebuild workflow for broken UI pages
-  three-layers.md    # Vision / specs / docs separation
-  planning-vs-execution.md  # Why planning and building need different contexts
+changelog/                       # Skill evolution — case studies with reasoning
+  spec-to-build/                 # Per-update entries: stb-update-reasoning.md, ...
+  docs/
+  spec-docs/
+  skill-manager/
 
-changelog/           # Skill evolution with case studies
-  spec-to-build/     # Diffs and reasoning for each skill update
-  docs/              # Diffs and reasoning for each skill update
-  spec-docs/         # Diffs and reasoning for each skill update
+workflows/                       # Process documentation
+  rebuild_workflow.md             # Clean rebuild workflow for broken UI pages
 
-origin/              # Where the thinking started
-  ctree.md           # Context curation before agents existed
+origin/                          # Skill ideation — outlines and reasoning before a skill exists
+  skill-manager/                 # idea.md, outline.md
+  spec-to-build/
+  docs/
+  spec-docs/
 
-README.md            # Overview and how to get started
+doc.md                           # How I Build Software with AI Agents — full workflow write-up
+README.md                        # This file
 ```
 
 ---
@@ -52,6 +55,8 @@ README.md            # Overview and how to get started
 ## Skills
 
 Skills are behavioral contracts for Claude Code. Each one is a markdown file that defines how the agent should approach a specific type of task. They're portable — copy them into any repo's `.claude/skills/` directory and they work.
+
+Every skill version is preserved in `skills/[name]/` as `[name]-v1.md`, `[name]-v2.md`, etc. The live version is always the highest number. Previous versions stay for reference and diffing.
 
 ### spec-to-build
 
@@ -76,16 +81,26 @@ Targeted post-build documentation pass. Uses the spec-to-build outputs (summarie
 
 Use after every build.
 
+### skill-manager
+
+Meta-skill that manages all other skills. Three modes:
+
+- **create** — scaffolds a new skill, saves v1 snapshot, writes initial changelog entry
+- **update** — guided skill update with automatic versioning and changelog capture
+- **changelog** — documents a change that was already made manually
+
+Writes versioned snapshots to `skills/` and changelog entries to `changelog/` automatically.
+
 ### The chain
 
-These skills form a pipeline:
+The project skills form a pipeline:
 
 ```
 spec-to-build  →  Claude Code builds  →  spec-docs  →  docs (periodic)
    (plan)            (execute)          (targeted)      (full audit)
 ```
 
-Each step feeds the next. Each has a clear scope. Nothing tries to do two jobs.
+The skill-manager sits above this chain — it creates and evolves the skills themselves.
 
 ---
 
@@ -111,6 +126,8 @@ When debugging leads to regression loops:
 3. **Run spec-to-build** — same pipeline, misalignments catch bad assumptions
 4. **Build from clean** — no patching, no regression risk
 5. **Capture change notes** — small issues noticed during testing go into a running list for future specs
+
+See `workflows/rebuild_workflow.md` for the full process with prompt templates and file conventions.
 
 ### Three Documentation Layers
 
@@ -150,6 +167,8 @@ Each entry like this is a data point someone else can learn from. Over time, the
 
 ## Origin
 
+The `origin/` directory captures how skills are conceived — the initial idea, the outline, the reasoning before any code is written. This is the ideation stage, before `skill-manager create` turns it into a real skill.
+
 Before coding agents existed, the bottleneck was getting code into the AI's context window. I built a CLI tool called [CTree](https://github.com/FromFractalWaves/ctree) that generated curated context snapshots — select which files to include, package them for the AI. Agents made that tool obsolete, but the underlying insight survived: **control what the agent sees and it produces better work.**
 
 CTree was manual context curation. The skills system is automated context engineering. The problem is the same. The tools evolved.
@@ -160,7 +179,7 @@ CTree was manual context curation. The skills system is automated context engine
 
 ### Quick start
 
-1. Copy the skills from `skills/` into your repo's `.claude/skills/` directory
+1. Copy the latest version of each skill from `skills/[name]/` into your repo's `.claude/skills/` directory
 2. Create a `specs/` directory in your repo
 3. Write a spec for something you want to build
 4. Run `/spec-to-build specs/my-feature.md` in Claude Code
