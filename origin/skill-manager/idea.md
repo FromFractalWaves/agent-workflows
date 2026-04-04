@@ -1,0 +1,1 @@
+meta skill to make the agent-workflows repo eaiser to manage
