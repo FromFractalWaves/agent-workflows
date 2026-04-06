@@ -26,29 +26,31 @@ Everything here was developed through real use on a production-scale project (a 
 
 ```
 skills/                          # Versioned skill snapshots
-  spec-to-build/                 # spec-to-build-v1.md, spec-to-build-v2.md, ...
+  spec-to-build/                 # spec-to-build-v1.md through v5.md
+  build-spec/                    # build-spec-v1.md, build-spec-v2.md
   docs/                          # docs skill versions
-  spec-docs/                     # spec-docs skill versions
-  skill-manager/                 # skill-manager-v1.md, ...
+  spec-docs/                     # spec-docs skill versions (retired — absorbed into build-spec v2)
+  skill-manager/                 # skill-manager-v1.md, skill-manager-v2.md
+  iterate/                       # iterate-v1.md
 
 changelog/                       # Skill evolution — per-version case studies
-  spec-to-build/                 # v1/, v2/, ... each with diff.md, reasoning.md
-  docs/
-  spec-docs/
-  skill-manager/
+  spec-to-build/                 # v3/, v4/, v5/ each with diff.md, reasoning.md
+  build-spec/                    # v1/, v2/
+  iterate/                       # v1/
+  skill-manager/                 # v2/
+  spec-docs/                     # retired/
 
 workflows/                       # Process documentation
   rebuild/                       # Rebuild from clean specs instead of debugging
   repo-transplant/               # Extract specs from source repos for native rebuilds
+  spec-to-build/                 # Pipeline process notes
 
 origin/                          # Skill ideation — outlines and reasoning before a skill exists
   skill-manager/                 # idea.md, outline.md
-  spec-to-build/
-  docs/
-  spec-docs/
 
 doc.md                           # How I Build Software with AI Agents — full workflow write-up
 vision.md                        # Where this project is headed — ideas, not commitments
+deductive_vs_empirical.md        # Essay on deductive vs empirical agent workflows
 README.md                        # This file
 ```
 
@@ -77,11 +79,13 @@ Full documentation audit. Reads every doc in the project, compares against the a
 
 Use periodically for comprehensive audits.
 
-### spec-docs
+### build-spec
 
-Targeted post-build documentation pass. Uses the spec-to-build outputs (summaries, references, build plan) to update only the docs affected by the most recent build. The target state summary is the source of truth.
+The execution counterpart to spec-to-build. Takes the build plan and executes it, verifies the build matches the spec, and updates affected documentation. Closes the loop between planning and building.
 
-Use after every build.
+### iterate
+
+Empirical, bug-driven development. Works toward a testing goal one bug at a time with documentation checkpoints and user confirmation between each fix. Designed for discovery work where you don't know what's broken until you try it. Session reports bridge conversations so work can stop and resume without losing context.
 
 ### skill-manager
 
@@ -98,11 +102,11 @@ Writes versioned snapshots to `skills/` and changelog entries to `changelog/` au
 The project skills form a pipeline:
 
 ```
-spec-to-build  →  Claude Code builds  →  spec-docs  →  docs (periodic)
-   (plan)            (execute)          (targeted)      (full audit)
+spec-to-build  →  build-spec  →  docs (periodic)
+   (plan)         (build + verify + update docs)    (full audit)
 ```
 
-The skill-manager sits above this chain — it creates and evolves the skills themselves.
+Doc updates happen inside build-spec (Phase 3) — there's no separate doc update step. The iterate skill operates independently — it's for empirical discovery work, not planned builds. The skill-manager sits above this chain — it creates and evolves the skills themselves.
 
 ---
 
@@ -115,9 +119,8 @@ The full planning-to-execution process:
 1. **Plan in conversation** — think out loud, iterate toward clarity, produce a spec in your own language
 2. **Run spec-to-build** — the skill aligns the spec with the repo and produces the build artifacts
 3. **Review** — verify summaries match your understanding, check misalignments, ask CC for pre-flight comments
-4. **Build** — CC executes the plan. If it fails, `git checkout . && git clean -fd` to revert with zero risk
-5. **Update docs** — run spec-docs to update affected documentation
-6. **Clean up** — delete spec files when done
+4. **Build** — run build-spec, which executes the plan, verifies the build, and updates affected docs
+5. **Clean up** — delete spec files when done
 
 ### Rebuild Workflow
 

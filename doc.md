@@ -78,13 +78,9 @@ Then the misalignments. These are usually minor (a type name mismatch, a file th
 
 Then I ask Claude Code: "any comments, suggestions, or advice before I run?" It flags edge cases and scope concerns.
 
-### Step 4: Build
+### Step 4: Build (build-spec skill)
 
-Claude Code executes the build plan. I run the dev server and verify manually. If something goes wrong: `git checkout . && git clean -fd` to revert, review what went wrong, update the spec or plan, try again.
-
-### Step 5: Update docs (spec-docs skill)
-
-After the build, the spec-docs skill runs a targeted documentation pass using the spec-to-build outputs as context. The target state summary is the source of truth — docs should describe the system as it exists now. It updates `CLAUDE.md`, architecture docs, and any other affected files, then reports which spec files can be deleted.
+The build-spec skill executes the build plan, verifies the build matches the spec, and updates affected documentation — all in one pass. The builder already has the freshest context about what changed, so doc updates happen inline rather than as a separate step. If something goes wrong: `git checkout . && git clean -fd` to revert, review what went wrong, update the spec or plan, try again.
 
 ---
 
@@ -96,9 +92,15 @@ Skills are behavioral contracts for Claude Code. Each skill is a markdown file i
 
 **spec-to-build** — the planning pipeline described above. Reads a spec, inventories the repo, produces references, summaries, misalignments, and a build plan.
 
+**build-spec** — the execution counterpart to spec-to-build. Takes a build plan and executes it, verifies the build matches the spec, and updates affected documentation.
+
+**iterate** — empirical, bug-driven development. Works toward a testing goal one bug at a time with documentation checkpoints and user confirmation between each fix. For discovery work where you don't know what's broken until you try it.
+
 **docs** — full repository documentation audit. Reads every doc, compares against the actual codebase, finds every discrepancy, fixes everything. Includes phase language detection and workflow alignment checks.
 
-**spec-docs** — targeted post-build documentation pass. Uses the spec-to-build outputs to update only the docs affected by the most recent build.
+**skill-manager** — meta-skill that manages all other skills. Scaffolds new skills, handles versioned updates with changelog capture, and documents changes that were made manually.
+
+*Note: spec-docs was retired and absorbed into build-spec v2, which now handles doc updates as part of its build-verify-document cycle.*
 
 ### How skills evolve
 
