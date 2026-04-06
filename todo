@@ -1,0 +1,3 @@
+
+One thing worth adding eventually: a case study from today. The TanStack Query cache vs useState decision for stage state is exactly the kind of thing the changelog format is designed for — spec said one thing, implementation hit a real problem, agent solved it differently and the solution was actually better. That's a data point someone can learn from.
+

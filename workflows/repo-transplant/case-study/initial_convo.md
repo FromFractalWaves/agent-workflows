@@ -69,3 +69,5 @@ fractalwaves@laptop:~/projects/albatross1a$ claude
   just the capture. i think i want to continue the work here in 1a until the capture works then use the      
   @~/.claude/workflows/repo-transplant.md workflow to built the capture into albatross what do you think     
   about that        
+
+  
