@@ -1,0 +1,1 @@
+seems that when stepping out a spec if we dont do docs inbetween then we should add a step to the skill to double check code vs spec requarding names of things and such then report if any are different as that will require a fix such as being changed or updating further spec steps
